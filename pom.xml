@@ -14,9 +14,9 @@
 	<groupId>com.github.cloudbow</groupId>
 	<artifactId>netty-http-client</artifactId>
 	<version>0.0.1</version>
-	<name>Task Handling Simplified</name>
+	<name>Netty Http Client</name>
 	<description>
-      Task Handling makes ease of use for handling tasks related to I/O by giving better task pooling.
+      This project aims at making a simple http client but yet high performing over nio with the help of netty
     </description>
 	<url>https://github.com/cloudbow/netty-http-client</url>
 	<licenses>
