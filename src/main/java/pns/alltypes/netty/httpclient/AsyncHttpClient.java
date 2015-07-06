@@ -34,7 +34,7 @@ import pns.alltypes.netty.httpclient.response.ResponseMsg;
 public class AsyncHttpClient {
 
     /** The Constant URL. */
-    private static final String URL = "http://slingbtc-mdconfig-qa.s3.amazonaws.com/config/type/services/product/speed/version/1.0.0.json";
+    private static final String URL = "http://google.com?q=async";
 
     /** The Constant LOGGER. */
     private static final Logger LOGGER = Logger.getLogger(AsyncHttpClient.class);
@@ -62,7 +62,7 @@ public class AsyncHttpClient {
     private void sendRequest() {
         HostConfig hostConfig = null;
         try {
-            hostConfig = new HostConfig("slingbtc-mdconfig-qa.s3.amazonaws.com");
+            hostConfig = new HostConfig("google.com");
             AsyncHttpClient.REQUEST_MAKER.registerHost(hostConfig);
         } catch (final AlreadyRegisteredHostException e) {
             // TODO Auto-generated catch block

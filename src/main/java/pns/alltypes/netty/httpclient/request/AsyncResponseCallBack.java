@@ -22,14 +22,15 @@ public class AsyncResponseCallBack implements ResponseCallBack {
 
     /** The response. */
     private volatile ResponseMsg response;
-    
+
     /** The count down latch. */
     private final CountDownLatch countDownLatch = new CountDownLatch(1);
 
     /** The caller response. */
     private final ExternalCallback callerResponse;
 
-    /** Instantiates a new async response call back.
+    /**
+     * Instantiates a new async response call back.
      * @param responseCallBack
      *            the response call back
      */
@@ -38,9 +39,6 @@ public class AsyncResponseCallBack implements ResponseCallBack {
 
     }
 
-    /* (non-Javadoc)
-     * @see com.slingmedia.common.asynchttpclient.ResponseCallBack#httpResponse(com.slingmedia.common.asynchttpclient.ResponseMsg)
-     */
     @Override
     public void httpResponse(final ResponseMsg response, final boolean writeSuccess) {
         if (AsyncResponseCallBack.LOGGER.isTraceEnabled()) {
@@ -50,8 +48,7 @@ public class AsyncResponseCallBack implements ResponseCallBack {
 
         if (writeSuccess) {
             if (AsyncResponseCallBack.LOGGER.isTraceEnabled()) {
-                AsyncResponseCallBack.LOGGER.trace(String.format("Counting down on latch %s with response %s",
-                        countDownLatch, response));
+                AsyncResponseCallBack.LOGGER.trace(String.format("Counting down on latch %s with response %s", countDownLatch, response));
             }
             getCountDownLatch().countDown();
             callerResponse.httpResponse(response);
@@ -59,23 +56,22 @@ public class AsyncResponseCallBack implements ResponseCallBack {
         }
     }
 
-    /** Gets the response.
+    /**
+     * Gets the response.
      * @return the response
      */
     public ResponseMsg getResponse() {
         return response;
     }
 
-    /** Gets the count down latch.
+    /**
+     * Gets the count down latch.
      * @return the count down latch
      */
     public CountDownLatch getCountDownLatch() {
         return countDownLatch;
     }
 
-    /* (non-Javadoc)
-     * @see com.slingmedia.common.asynchttpclient.response.ResponseCallBack#httpResponse(com.slingmedia.common.asynchttpclient.response.ResponseMsg)
-     */
     @Override
     public void httpResponse(final ResponseMsg response) {
         // TODO Auto-generated method stub
