@@ -92,9 +92,9 @@ The only difference between sync and async is that in case of sync the call bloc
 
 ### Sync+OPEN_CLOSE Example
 
-Refer: https://github.com/cloudbow/netty-http-client/blob/master/src/main/java/http/io/asynchttpclient/SyncHttpClient.java
+Refer: https://github.com/cloudbow/netty-http-client/blob/master/src/main/java/pns/alltypes/netty/httpclient/SyncHttpClient.java
  
 ### Async+PERSISTENT
 
-Refer: https://github.com/cloudbow/netty-http-client/blob/master/src/main/java/http/io/asynchttpclient/AsyncHttpClient.java
+Refer: https://github.com/cloudbow/netty-http-client/blob/master/src/main/java/pns/alltypes/netty/httpclient/AsyncHttpClient.java
 
