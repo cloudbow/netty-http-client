@@ -30,7 +30,7 @@ local.properties
 .classpath
 .settings/
 .loadpath
-.settings.xml
+settings.xml
 # External tool builders
 .externalToolBuilders/
 

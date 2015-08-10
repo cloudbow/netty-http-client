@@ -1,6 +1,10 @@
 
 package pns.alltypes.netty.httpclient.codec;
 
+import java.util.List;
+
+import org.apache.log4j.Logger;
+
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.MessageToMessageEncoder;
@@ -14,11 +18,6 @@ import io.netty.handler.codec.http.HttpMethod;
 import io.netty.handler.codec.http.HttpRequest;
 import io.netty.handler.codec.http.HttpVersion;
 import io.netty.util.CharsetUtil;
-
-import java.util.List;
-
-import org.apache.log4j.Logger;
-
 import pns.alltypes.netty.httpclient.request.HttpRequestMessage;
 
 /**
@@ -50,7 +49,7 @@ public class HttpRequestMessageEncoder extends MessageToMessageEncoder<HttpReque
 
             final FullHttpRequest request = new DefaultFullHttpRequest(HttpVersion.HTTP_1_1, msg.getHttpMethod(), msg.getUrl());
 
-            request.headers().add(msg.getHeaders());
+            addProvidedHeaders(msg, request);
             out.add(request);
 
             if (HttpRequestMessageEncoder.LOGGER.isTraceEnabled()) {
@@ -62,6 +61,7 @@ public class HttpRequestMessageEncoder extends MessageToMessageEncoder<HttpReque
             contentBytes = msg.getBody().getBytes(CharsetUtil.UTF_8);
             final ByteBuf buf = ctx.alloc().directBuffer();
             buf.writeBytes(contentBytes);
+            request.headers().add(msg.getHeaders());
             request.headers().set(HttpHeaders.Names.CONTENT_LENGTH, contentBytes.length);
             final HttpContent content = new DefaultLastHttpContent(buf);
             out.add(request);
@@ -75,14 +75,20 @@ public class HttpRequestMessageEncoder extends MessageToMessageEncoder<HttpReque
         ctx.flush();
     }
 
-    /** Gets the http request message.
+    private void addProvidedHeaders(final HttpRequestMessage msg, final FullHttpRequest request) {
+        request.headers().add(msg.getHeaders());
+    }
+
+    /**
+     * Gets the http request message.
      * @return the http request message
      */
     public HttpRequestMessage getHttpRequestMessage() {
         return httpRequestMessage;
     }
 
-    /** Sets the http request message.
+    /**
+     * Sets the http request message.
      * @param httpRequestMessage
      *            the new http request message
      */
