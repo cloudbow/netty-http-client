@@ -70,6 +70,10 @@ public class HostConfig {
         this(host, port);
         this.syncType = syncType2;
     }
+    
+    public String getBaseHttpUrl() {
+       return new StringBuilder().append("http://").append(host).append(":").append(port).toString();
+    }
 
     /** Gets the host.
     * @return the host
