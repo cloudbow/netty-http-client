@@ -5,6 +5,9 @@ package pns.alltypes.netty.httpclient;
 
 import io.netty.handler.codec.http.HttpMethod;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.log4j.Level;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
@@ -40,7 +43,7 @@ public class SyncHttpClient {
      */
     public static void main(final String[] args) {
         LogManager.getRootLogger().setLevel(Level.TRACE);
-        SyncHttpClient.SYNC_HTTP_CLIENT.sendRequest();
+        SyncHttpClient.SYNC_HTTP_CLIENT.sendRequests();
 
     }
 
@@ -50,14 +53,14 @@ public class SyncHttpClient {
     private void sendRequest() {
         HostConfig hostConfig = null;
         try {
-            hostConfig = new HostConfig("google.com", 80, SyncType.OPENCLOSE);
+            hostConfig = new HostConfig("cprenweb.com", 80, SyncType.OPENCLOSE);
             SyncHttpClient.REQUEST_MAKER.registerHost(hostConfig);
         } catch (final AlreadyRegisteredHostException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
 
-        final Builder registerCallBack = SyncHttpClient.REQUEST_MAKER.registerCallBack(HttpMethod.GET, "http://google.com?q=netty-http-client");
+        final Builder registerCallBack = SyncHttpClient.REQUEST_MAKER.registerCallBack(HttpMethod.GET, "http://cprenweb.com?q=netty-http-client");
         registerCallBack.url().headers();
         ResponseMsg requestSync = null;
         try {
@@ -70,6 +73,40 @@ public class SyncHttpClient {
             SyncHttpClient.LOGGER.trace(requestSync.getResponse());
         }
 
+    }
+    
+    private void sendRequests() {
+        List<HostConfig> RUBENS_HOST_CONFIGS = new ArrayList<>();
+
+       String[] rubensHost = new String[] {"google.com","yahoo.com","rediff.com","amazon.com","ebay.com","flipkart.com","yahoo.co.in","ebay.in","amazon.in"};
+       for (String host : rubensHost) {
+         HostConfig hostConfig = new HostConfig(host, 8080, SyncType.OPENCLOSE);
+         RUBENS_HOST_CONFIGS.add(hostConfig);
+         try {
+            REQUEST_MAKER.registerHost(hostConfig);
+         }
+         catch (AlreadyRegisteredHostException e) {
+            // do nothing.
+         }
+      }
+       
+             for (HostConfig hostConfig : RUBENS_HOST_CONFIGS) {
+                StringBuilder url = new StringBuilder();
+         url.append("http://").append(hostConfig.getHost()).append(":").append(hostConfig.getPort()).append("/");
+         final Builder builder = REQUEST_MAKER.registerCallBack(HttpMethod.GET, url.toString());
+         builder.url().headers().addHeader("host", hostConfig.getHost());
+         if (LOGGER.isTraceEnabled()) {
+            LOGGER.trace(String.format("Requesting url %s", url.toString()));
+         }
+         try {
+            REQUEST_MAKER.requestSync(builder.build(), hostConfig);
+         }
+         catch (final InvalidResponseException e) {
+            LOGGER.error(String.format("Error in getting response %s", e));
+         }
+             }
+
+       
     }
 
 }

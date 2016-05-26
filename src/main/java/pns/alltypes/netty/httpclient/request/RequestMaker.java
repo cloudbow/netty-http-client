@@ -177,7 +177,10 @@ public class RequestMaker {
 
             @Override
             public ResponseMsg call() throws Exception {
+                
+                //call original request method
                 request(httpRequestMessage, hostConfig, responseCallBack);
+                
                 if (RequestMaker.LOGGER.isTraceEnabled()) {
                     RequestMaker.LOGGER.trace(String.format("Syncing on lock %s for request  %s", responseCallBack.getCountDownLatch(), httpRequestMessage));
                 }

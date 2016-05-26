@@ -51,7 +51,7 @@ public class HttpRequestConsumerCollection {
     private static final RequestResponeSync REQUEST_RESPONE_SYNC = RequestResponeSync.getInstance();
 
     /** The Constant MAX_REQUEST_CONSUMERS. */
-    private static final int MAX_REQUEST_CONSUMERS = 10;
+    private static final int MAX_REQUEST_CONSUMERS = 40;
     /** The service. */
     private transient final ScheduledExecutorService httpRequestConsumerExecutorService;
 
