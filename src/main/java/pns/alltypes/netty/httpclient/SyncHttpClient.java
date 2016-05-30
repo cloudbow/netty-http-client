@@ -50,17 +50,18 @@ public class SyncHttpClient {
     /**
      * Send request.
      */
-    private void sendRequest() {
+   @SuppressWarnings("unused")
+   private void sendRequest() {
         HostConfig hostConfig = null;
         try {
-            hostConfig = new HostConfig("cprenweb.com", 80, SyncType.OPENCLOSE);
+            hostConfig = new HostConfig("google.com", 80, SyncType.OPENCLOSE);
             SyncHttpClient.REQUEST_MAKER.registerHost(hostConfig);
         } catch (final AlreadyRegisteredHostException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
 
-        final Builder registerCallBack = SyncHttpClient.REQUEST_MAKER.registerCallBack(HttpMethod.GET, "http://cprenweb.com?q=netty-http-client");
+        final Builder registerCallBack = SyncHttpClient.REQUEST_MAKER.registerCallBack(HttpMethod.GET, "http://google.com?q=netty-http-client");
         registerCallBack.url().headers();
         ResponseMsg requestSync = null;
         try {
@@ -80,7 +81,7 @@ public class SyncHttpClient {
 
        String[] rubensHost = new String[] {"google.com","yahoo.com","rediff.com","amazon.com","ebay.com","flipkart.com","yahoo.co.in","ebay.in","amazon.in"};
        for (String host : rubensHost) {
-         HostConfig hostConfig = new HostConfig(host, 8080, SyncType.OPENCLOSE);
+         HostConfig hostConfig = new HostConfig(host, 80, SyncType.OPENCLOSE);
          RUBENS_HOST_CONFIGS.add(hostConfig);
          try {
             REQUEST_MAKER.registerHost(hostConfig);
