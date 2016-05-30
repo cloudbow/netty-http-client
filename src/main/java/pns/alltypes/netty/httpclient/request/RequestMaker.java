@@ -109,13 +109,16 @@ public class RequestMaker {
      *             the already registered host exception
      */
     public void registerHost(final HostConfig hostConfig) throws AlreadyRegisteredHostException {
+        //Add a queue for each request
         RequestMaker.HTTP_REQUEST_QUEUE_COLLECTION.mapEmptyQueueForHost(hostConfig);
+        //Register host with connection pool
         RequestMaker.CONNECTION_POOL.registerHost(hostConfig);
         final int totalConsumers = hostConfig.getTotalConsumers();
         for (int i = 0; i < totalConsumers; i++) {
             if (RequestMaker.LOGGER.isTraceEnabled()) {
                 RequestMaker.LOGGER.trace(String.format("Adding consumer for hostConfig %s", hostConfig));
             }
+            //add consumer on register host
             RequestMaker.HTTP_REQUEST_CONSUMER_COLLECTION.addConsumer(hostConfig);
         }
     }
