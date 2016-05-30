@@ -11,9 +11,9 @@ import io.netty.util.concurrent.GenericFutureListener;
 import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.SynchronousQueue;
+import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.log4j.Logger;
@@ -50,23 +50,18 @@ public class HttpRequestConsumerCollection {
     /** The Constant REQUEST_RESPONE_SYNC. */
     private static final RequestResponeSync REQUEST_RESPONE_SYNC = RequestResponeSync.getInstance();
 
-    /** The Constant MAX_REQUEST_CONSUMERS. */
-    private static final int MAX_REQUEST_CONSUMERS = 40;
     /** The service. */
-    private transient final ScheduledExecutorService httpRequestConsumerExecutorService;
+    private transient final ExecutorService httpRequestConsumerExecutorService;
 
     /** Instantiates a new http request consumer collection.
      */
     private HttpRequestConsumerCollection() {
         if (HttpRequestConsumerCollection.LOGGER.isTraceEnabled()) {
             HttpRequestConsumerCollection.LOGGER.trace("inside ApnsDeliveryClientCollection");
-        }
-        httpRequestConsumerExecutorService = Executors.newScheduledThreadPool(HttpRequestConsumerCollection.MAX_REQUEST_CONSUMERS,
-                new NHTTPClientThreadFactory("HttpRequestConsumerCollection"));
-        ((ScheduledThreadPoolExecutor) httpRequestConsumerExecutorService).setRemoveOnCancelPolicy(true);
-
-        // ((ScheduledThreadPoolExecutor)
-        // service).setMaximumPoolSize(HttpRequestConsumerCollection.MAX_REQUEST_CONSUMERS);
+        } 
+        //increase idleness and hence copied this from cached threadpool
+        //improved idleness
+        httpRequestConsumerExecutorService = new ThreadPoolExecutor(0, Integer.MAX_VALUE,5, TimeUnit.HOURS,new SynchronousQueue<Runnable>(),new NHTTPClientThreadFactory("HttpRequestConsumerCollection"));
     }
 
     /** Gets the single instance of HttpRequestConsumerCollection.
@@ -287,7 +282,15 @@ public class HttpRequestConsumerCollection {
                         }
                     }
 
-                    timedDelivery(hostConfig);
+                    try {
+                        if (HttpRequestConsumerCollection.LOGGER.isTraceEnabled()) {
+                            HttpRequestConsumerCollection.LOGGER.trace(String.format("CONSUMER CREATION FOR HOST %s SCHEDULED",
+                                    hostConfig));
+                        }
+                        httpRequestConsumerExecutorService.submit(new QueueConsumer(hostConfig));
+                  
+                    } finally {
+                    }
 
                 }
 
@@ -326,24 +329,15 @@ public class HttpRequestConsumerCollection {
      *            the host config
      */
     public void addConsumer(final HostConfig hostConfig) {
-        timedDelivery(hostConfig);
-    }
-
-    /** Timed delivery.
-     * @param hostConfig
-     *            the host config
-     */
-    private void timedDelivery(final HostConfig hostConfig) {
         try {
             if (HttpRequestConsumerCollection.LOGGER.isTraceEnabled()) {
                 HttpRequestConsumerCollection.LOGGER.trace(String.format("CONSUMER CREATION FOR HOST %s SCHEDULED",
                         hostConfig));
             }
-            httpRequestConsumerExecutorService.schedule(new QueueConsumer(hostConfig), hostConfig.getRetryTime(), TimeUnit.MILLISECONDS);
-
+            httpRequestConsumerExecutorService.execute(new QueueConsumer(hostConfig));
+      
         } finally {
         }
-
     }
 
     /** Update registered callback.
